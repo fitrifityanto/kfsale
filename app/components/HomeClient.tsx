@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Header from "./Header";
+import Footer from "./Footer";
 import ProductGrid from "./ProductGrid";
 import { Product } from "@/types";
 
@@ -45,10 +46,8 @@ export default function HomeClient({ initialProducts }: HomeClientProps) {
         />
       </main>
 
-      {/* Optional: Footer sederhana */}
-      <footer className="bg-street-black text-white py-8 text-center uppercase tracking-widest text-xs">
-        © 2025 Kickflip Socks
-      </footer>
+      {/* 4. Footer */}
+      <Footer />
     </div>
   );
 }
