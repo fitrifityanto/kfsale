@@ -1,35 +1,25 @@
+// HomeClient.tsx
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
+
 import Header from "./Header";
 import Footer from "./Footer";
 import ProductGrid from "./ProductGrid";
 import { Product } from "@/types";
+import { useCart } from "@/context/CartContext";
 
 interface HomeClientProps {
   initialProducts: Product[];
 }
 
 export default function HomeClient({ initialProducts }: HomeClientProps) {
-  // State untuk keranjang belanja
-  const [cart, setCart] = useState<Product[]>([]);
-
-  // Handler saat tombol Add to Cart diklik
-  const handleAddToCart = (product: Product) => {
-    setCart((prev) => [...prev, product]);
-    alert(`${product.nama} added to cart!`); // Feedback sederhana
-  };
+  const { addToCart, cartCount } = useCart();
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* 1. Header menerima jumlah cart dan interaksi */}
-      <Header
-        cartCount={cart.length}
-        onCartClick={() => console.log("Open Cart")}
-        onHomeClick={() => window.location.reload()}
-      />
+      <Header />
 
-      {/* 2. Main Content */}
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="mb-8">
           <h2 className="text-3xl font-black uppercase tracking-tighter mb-2">
@@ -38,15 +28,13 @@ export default function HomeClient({ initialProducts }: HomeClientProps) {
           <div className="w-20 h-1 bg-street-red"></div>
         </div>
 
-        {/* 3. ProductGrid menerima data produk dan fungsi add to cart */}
         <ProductGrid
           products={initialProducts}
-          onAddToCart={handleAddToCart}
+          onAddToCart={addToCart} // Fungsi ini sekarang akan mengupdate Header secara otomatis
           isLoading={false}
         />
       </main>
 
-      {/* 4. Footer */}
       <Footer />
     </div>
   );

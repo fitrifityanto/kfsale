@@ -1,24 +1,35 @@
+// components/Header.tsx
+"use client";
+
 import React from "react";
 import { ShoppingCart } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useCart } from "@/context/CartContext";
 
 interface HeaderProps {
-  cartCount: number;
-  onCartClick: () => void;
-  onHomeClick: () => void;
+  cartCount?: number;
+  onCartClick?: () => void;
+  onHomeClick?: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
-  cartCount,
+  cartCount: propCartCount,
   onCartClick,
   onHomeClick,
 }) => {
+  const router = useRouter();
+  const { cartCount: contextCartCount } = useCart();
+
+  const displayCount =
+    propCartCount !== undefined ? propCartCount : contextCartCount;
+
   return (
     <header className="sticky top-0 z-50 w-full bg-street-black text-white border-b border-neutral-800">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo Section */}
         <div
           className="flex items-center gap-2 cursor-pointer"
-          onClick={onHomeClick}
+          onClick={onHomeClick || (() => router.push("/"))}
         >
           <div>
             <h1 className="text-2xl font-black tracking-tighter uppercase italic leading-none">
@@ -33,14 +44,14 @@ const Header: React.FC<HeaderProps> = ({
         {/* Actions Section */}
         <div className="flex items-center">
           <button
-            onClick={onCartClick}
+            onClick={onCartClick || (() => router.push("/cart"))}
             className="relative p-2 hover:bg-white hover:text-black transition-colors duration-200 group"
             aria-label="Keranjang Belanja"
           >
             <ShoppingCart className="w-6 h-6" />
-            {cartCount > 0 && (
+            {displayCount > 0 && (
               <span className="absolute -top-1 -right-1 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-street-red border border-street-black">
-                {cartCount}
+                {displayCount}
               </span>
             )}
           </button>

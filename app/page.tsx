@@ -1,10 +1,8 @@
 // app/page.tsx
-import HomeClient from "./components/HomeClient";
-import { Product } from "@/types"; //
+import HomeClient from "@/components/HomeClient";
+import { Product } from "@/types";
 
-// Fungsi fetch ke API Route
 async function getProducts(): Promise<Product[]> {
-  // Ganti URL ini dengan domain production Anda nanti jika sudah deploy
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
   // 'no-store' artinya data tidak dicache (selalu fresh), cocok untuk e-commerce
