@@ -6,18 +6,24 @@ import React from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import ProductGrid from "./ProductGrid";
-import { Product } from "@/types";
+import VoucherBanner from "./VoucherBanner";
+import { Product, Voucher } from "@/types";
 import { useCart } from "@/context/CartContext";
 
 interface HomeClientProps {
   initialProducts: Product[];
+  vouchers: Voucher[];
 }
 
-export default function HomeClient({ initialProducts }: HomeClientProps) {
+export default function HomeClient({
+  initialProducts,
+  vouchers,
+}: HomeClientProps) {
   const { addToCart, cartCount } = useCart();
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      <VoucherBanner vouchers={vouchers} />
       <Header />
 
       <main className="flex-grow container mx-auto px-4 py-8">

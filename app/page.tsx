@@ -1,6 +1,6 @@
 // app/page.tsx
 import HomeClient from "@/components/HomeClient";
-import { Product } from "@/types";
+import { Product, Voucher } from "@/types";
 
 async function getProducts(): Promise<Product[]> {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
@@ -19,8 +19,17 @@ async function getProducts(): Promise<Product[]> {
   return res.json();
 }
 
-export default async function Home() {
-  const products = await getProducts();
+async function getVouchers(): Promise<Voucher[]> {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  const res = await fetch(`${apiUrl}/api/vouchers`, { cache: "no-store" });
+  return res.ok ? res.json() : [];
+}
 
-  return <HomeClient initialProducts={products} />;
+export default async function Home() {
+  const [products, vouchers] = await Promise.all([
+    getProducts(),
+    getVouchers(),
+  ]);
+
+  return <HomeClient initialProducts={products} vouchers={vouchers} />;
 }
