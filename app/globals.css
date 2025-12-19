@@ -5,6 +5,7 @@
   --foreground: #171717;
   --street-red: #ff0000;
   --street-black: #111111;
+  --street-gray: #1f1f1f;
 }
 
 @theme inline {
@@ -16,6 +17,7 @@
   /* Mapping warna custom */
   --color-street-red: var(--street-red);
   --color-street-black: var(--street-black);
+  --color-street-gray: var(--street-gray);
 }
 
 @media (prefers-color-scheme: dark) {
