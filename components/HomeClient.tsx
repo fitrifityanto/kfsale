@@ -28,8 +28,8 @@ export default function HomeClient({
 
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h2 className="text-3xl font-black uppercase tracking-tighter mb-2">
-            New Arrivals
+          <h2 className="text-3xl text-street-gray font-black uppercase tracking-tighter mb-2">
+            Hot Deals
           </h2>
           <div className="w-20 h-1 bg-street-red"></div>
         </div>

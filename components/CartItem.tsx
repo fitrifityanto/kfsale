@@ -36,7 +36,7 @@ const CartItem: React.FC<CartItemProps> = ({ item, onUpdateQty, onRemove }) => {
           </p>
           <div className="mt-2 text-street-red font-bold">
             {formatRupiah(finalPrice)}{" "}
-            <span className="text-gray-400 text-xs line-through font-normal ml-2">
+            <span className="text-gray-500 text-xs line-through font-normal ml-2">
               {formatRupiah(item.harga_normal)}
             </span>
           </div>
@@ -66,7 +66,7 @@ const CartItem: React.FC<CartItemProps> = ({ item, onUpdateQty, onRemove }) => {
 
         <button
           onClick={() => item._id && onRemove(item._id)}
-          className="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-street-red flex items-center gap-1 transition-colors"
+          className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-street-red flex items-center gap-1 transition-colors"
         >
           <Trash2 size={14} /> Remove
         </button>

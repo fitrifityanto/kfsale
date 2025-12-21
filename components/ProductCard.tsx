@@ -27,7 +27,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
         <img
           src={product.gambar}
           alt={product.nama}
-          className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105" // Menambah efek zoom dikit saat hover
+          className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
           loading="lazy"
         />
         {/* Discount Badge */}
@@ -40,7 +40,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
       <div className="p-5 flex flex-col flex-grow">
         <div className="mb-4">
           {/* Perbaikan di sini: Menggunakan displayId hasil slice _id */}
-          <p className="text-[10px] text-gray-400 font-mono uppercase tracking-widest mb-1">
+          <p className="text-[10px] text-gray-500 font-mono uppercase tracking-widest mb-1">
             ID: #{displayId}
           </p>
           <h3
@@ -54,7 +54,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
         {/* Price Section - Pushed down */}
         <div className="mt-auto space-y-4">
           <div className="flex flex-col">
-            <span className="text-xs text-gray-400 line-through font-mono mb-1">
+            <span className="text-xs text-gray-500 line-through font-mono mb-1">
               {formatRupiah(product.harga_normal)}
             </span>
             <span className="text-xl font-black text-street-red">
