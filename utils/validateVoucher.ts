@@ -1,5 +1,6 @@
-import type { Voucher } from "../types";
-import { isVoucherActive } from "./isVoucherActive";
+// utils/validateVoucher.ts
+import type { Voucher } from "@/types";
+import { isVoucherActive } from "@/utils/isVoucherActive";
 
 interface ValidationResult {
   isValid: boolean;
@@ -29,11 +30,10 @@ export const validateVoucher = (
     const now = new Date();
     now.setHours(0, 0, 0, 0);
 
-    // Parse start date sebagai waktu lokal
-    const startDate = new Date(`${voucher.mulai}T00:00:00`);
-    // const endDate = new Date(voucher.berakhir + "T23:59:59Z");
+    // Ambil YYYY-MM-DD saja
+    const startStr = voucher.mulai.toString().split("T")[0];
+    const startDate = new Date(`${startStr}T00:00:00`);
 
-    // Cek apakah tanggal hari ini (00:00) lebih kecil dari tanggal mulai (00:00)
     if (now.getTime() < startDate.getTime()) {
       return {
         isValid: false,
@@ -42,7 +42,6 @@ export const validateVoucher = (
       };
     }
 
-    // Jika logic sampai sini, berarti sudah melewati startDate, maka pasti expired
     return {
       isValid: false,
       message: "Voucher has expired.",
