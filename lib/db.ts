@@ -10,7 +10,7 @@ async function connectDb() {
   }
 
   if (!process.env.MONGO_URI) {
-    throw new Error("Pastikan MONGO_URI sudah didefinisikan di .env.local");
+    throw new Error("Pastikan MONGO_URI sudah didefinisikan di .env");
   }
 
   try {

@@ -1,31 +1,23 @@
 // app/page.tsx
 import HomeClient from "@/components/HomeClient";
-import { Product, Voucher } from "@/types";
+import { connectDb, ProductModel, VoucherModel } from "@/lib/db"; // Import langsung dari db.ts
 
-async function getProducts(): Promise<Product[]> {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-
-  // 'no-store' artinya data tidak dicache (selalu fresh), cocok untuk e-commerce
-  // Jika ingin cache, ganti menjadi { next: { revalidate: 3600 } } (1 jam)
-  const res = await fetch(`${apiUrl}/api/products`, {
-    cache: "no-store",
-  });
-
-  if (!res.ok) {
-    console.error("Failed to fetch products");
-    return [];
-  }
-
-  return res.json();
+async function getProducts() {
+  await connectDb();
+  // Menggunakan .lean() agar data lebih ringan dan mudah di-serialize
+  const products = await ProductModel.find({}).lean();
+  // Konversi _id MongoDB ke string agar tidak error saat dikirim ke Client Component
+  return JSON.parse(JSON.stringify(products));
 }
 
-async function getVouchers(): Promise<Voucher[]> {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-  const res = await fetch(`${apiUrl}/api/vouchers`, { cache: "no-store" });
-  return res.ok ? res.json() : [];
+async function getVouchers() {
+  await connectDb();
+  const vouchers = await VoucherModel.find({}).lean();
+  return JSON.parse(JSON.stringify(vouchers));
 }
 
 export default async function Home() {
+  // Panggil data langsung tanpa melalui fetch HTTP
   const [products, vouchers] = await Promise.all([
     getProducts(),
     getVouchers(),
