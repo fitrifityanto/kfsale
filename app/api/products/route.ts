@@ -1,35 +1,25 @@
 // app/api/products/route.ts
-import { NextResponse } from "next/server";
-import { connectDb, ProductModel } from "@/lib/db";
-import { Product } from "@/types";
 
-// Buat interface bantu untuk representasi data mentah dari MongoDB
-interface ProductDocument extends Omit<Product, "_id"> {
-  _id: { toString(): string };
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+import { NextResponse } from "next/server";
+import { getProducts } from "@/lib/supabase";
+
+export const runtime = "edge"; // Sangat disarankan untuk Cloudflare Pages/Workers
 
 export async function GET() {
   try {
-    await connectDb();
+    // Memanggil helper yang sudah spesifik memilih kolom
+    const products = await getProducts();
 
-    // Ambil data dari MongoDB
-    const products = await ProductModel.find({}).lean<ProductDocument[]>();
+    if (!products || products.length === 0) {
+      return NextResponse.json(
+        { message: "Data produk kosong" },
+        { status: 200 },
+      );
+    }
 
-    // Serialisasi data (sama seperti logic sebelumnya)
-    const serializedProducts = products.map((p) => ({
-      ...p,
-      _id: p._id.toString(),
-      // Mapping tambahan jika Anda masih butuh properti 'id' tanpa underscore
-      id: p._id.toString(),
-      createdAt: p.createdAt ? p.createdAt.toISOString() : undefined,
-      updatedAt: p.updatedAt ? p.updatedAt.toISOString() : undefined,
-    }));
-
-    // Return response JSON
-    return NextResponse.json(serializedProducts, { status: 200 });
+    return NextResponse.json(products, { status: 200 });
   } catch (error) {
+    console.error("Gagal mengambil data produk dari Supabase:", error);
     return NextResponse.json(
       { error: "Gagal mengambil data produk" },
       { status: 500 },

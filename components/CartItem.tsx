@@ -32,7 +32,7 @@ const CartItem: React.FC<CartItemProps> = ({ item, onUpdateQty, onRemove }) => {
             {item.nama}
           </h4>
           <p className="text-xs text-gray-500 font-mono mt-1">
-            ID: {item._id?.substring(0, 8)}...
+            ID: {item.id?.substring(0, 8)}...
           </p>
           <div className="mt-2 text-street-red font-bold">
             {formatRupiah(finalPrice)}{" "}
@@ -47,7 +47,7 @@ const CartItem: React.FC<CartItemProps> = ({ item, onUpdateQty, onRemove }) => {
       <div className="flex flex-row sm:flex-col justify-between items-center sm:items-end gap-4 mt-4 sm:mt-0">
         <div className="flex items-center border-2 border-black">
           <button
-            onClick={() => item._id && onUpdateQty(item._id, -1)}
+            onClick={() => item.id && onUpdateQty(item.id, -1)}
             disabled={item.quantity <= 1}
             className="w-8 h-8 flex items-center justify-center text-black hover:text-white hover:bg-black transition-colors disabled:opacity-30"
           >
@@ -57,7 +57,7 @@ const CartItem: React.FC<CartItemProps> = ({ item, onUpdateQty, onRemove }) => {
             {item.quantity}
           </span>
           <button
-            onClick={() => item._id && onUpdateQty(item._id, 1)}
+            onClick={() => item.id && onUpdateQty(item.id, 1)}
             className="w-8 h-8 flex items-center justify-center text-black hover:text-white hover:bg-black transition-colors"
           >
             <Plus size={14} />
@@ -65,7 +65,7 @@ const CartItem: React.FC<CartItemProps> = ({ item, onUpdateQty, onRemove }) => {
         </div>
 
         <button
-          onClick={() => item._id && onRemove(item._id)}
+          onClick={() => item.id && onRemove(item.id)}
           className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-street-red flex items-center gap-1 transition-colors"
         >
           <Trash2 size={14} /> Remove

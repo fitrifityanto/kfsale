@@ -1,5 +1,5 @@
 export interface Product {
-  _id?: string;
+  id?: string;
   nama: string;
   gambar: string;
   harga_normal: number;
@@ -10,7 +10,7 @@ export interface Product {
 }
 
 export interface Voucher {
-  _id?: string;
+  id?: string;
   kode: string;
   diskon_persen: number;
   min_belanja: number;

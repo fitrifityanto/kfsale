@@ -1,27 +1,24 @@
 // app/page.tsx
+
 import HomeClient from "@/components/HomeClient";
-import { connectDb, ProductModel, VoucherModel } from "@/lib/db"; // Import langsung dari db.ts
+import { getProducts, getVouchers } from "@/lib/supabase";
 
-async function getProducts() {
-  await connectDb();
-  // Menggunakan .lean() agar data lebih ringan dan mudah di-serialize
-  const products = await ProductModel.find({}).lean();
-  // Konversi _id MongoDB ke string agar tidak error saat dikirim ke Client Component
-  return JSON.parse(JSON.stringify(products));
-}
-
-async function getVouchers() {
-  await connectDb();
-  const vouchers = await VoucherModel.find({}).lean();
-  return JSON.parse(JSON.stringify(vouchers));
-}
+// Mengaktifkan Edge Runtime agar loading halaman sangat cepat di Cloudflare
+export const runtime = "edge";
 
 export default async function Home() {
-  // Panggil data langsung tanpa melalui fetch HTTP
-  const [products, vouchers] = await Promise.all([
-    getProducts(),
-    getVouchers(),
-  ]);
+  try {
+    // Memanggil data secara paralel dari Supabase
 
-  return <HomeClient initialProducts={products} vouchers={vouchers} />;
+    const [products, vouchers] = await Promise.all([
+      getProducts(),
+      getVouchers(),
+    ]);
+
+    return <HomeClient initialProducts={products} vouchers={vouchers} />;
+  } catch (error) {
+    console.error("Gagal memuat halaman utama:", error);
+    // Fallback jika database bermasalah agar website tidak blank putih
+    return <HomeClient initialProducts={[]} vouchers={[]} />;
+  }
 }

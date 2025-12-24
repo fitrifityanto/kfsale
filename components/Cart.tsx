@@ -58,7 +58,7 @@ const Cart: React.FC<CartProps> = ({ onBackToHome }) => {
         <div className="lg:col-span-2 border-t-2 border-black">
           {cartItems.map((item) => (
             <CartItem
-              key={item._id}
+              key={item.id}
               item={item}
               onUpdateQty={updateQuantity}
               onRemove={removeFromCart}
