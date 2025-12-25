@@ -7,6 +7,7 @@ import type { CartItem, CustomerData, Voucher } from "@/types";
 import { formatRupiah } from "@/utils/format";
 import { validateVoucher } from "@/utils/validateVoucher";
 import VoucherListModal from "@/components/VoucherListModal";
+import { getVouchers } from "@/lib/api";
 
 interface CheckoutFormProps {
   cartItems: CartItem[];
@@ -37,13 +38,10 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ cartItems, subtotal }) => {
   useEffect(() => {
     const fetchVouchers = async () => {
       try {
-        const response = await fetch("/api/vouchers");
-        if (response.ok) {
-          const data = await response.json();
-          setVouchers(data);
-        }
+        const data = await getVouchers();
+        setVouchers(data);
       } catch (error) {
-        console.error("Failed to fetch vouchers:", error);
+        console.error("Failed to load vouchers:", error);
       }
     };
 
@@ -119,8 +117,8 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ cartItems, subtotal }) => {
 
     const itemList = cartItems
       .map((item, index) => {
-        const price =
-          item.harga_normal - (item.harga_normal * item.diskon_persen) / 100;
+        const diskon = item.diskon_persen ?? 0;
+        const price = item.harga_normal - (item.harga_normal * diskon) / 100;
         return `${index + 1}. ${item.nama} - ${item.quantity}x (${formatRupiah(price * item.quantity)})`;
       })
       .join("\n");

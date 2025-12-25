@@ -1,3 +1,4 @@
+// components/VoucherBanner.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -18,16 +19,21 @@ const VoucherBanner: React.FC<VoucherBannerProps> = ({ vouchers }) => {
     const findBestVoucher = () => {
       const now = new Date();
       const activeVouchers = vouchers.filter((v) => {
+        // Validasi: Pastikan tanggal ada
+        if (!v.mulai || !v.berakhir) return false;
+
         const start = new Date(v.mulai);
         const end = new Date(v.berakhir);
-        end.setHours(23, 59, 59, 999);
+
+        // CATATAN: end.setHours(23, 59...) DIHAPUS agar akurat mengikuti jam di database
         return now >= start && now <= end;
       });
 
       if (activeVouchers.length === 0) return null;
 
-      return activeVouchers.sort(
-        (a, b) => b.diskon_persen - a.diskon_persen,
+      // Ambil voucher dengan diskon tertinggi
+      return [...activeVouchers].sort(
+        (a, b) => (b.diskon_persen ?? 0) - (a.diskon_persen ?? 0),
       )[0];
     };
 
@@ -39,32 +45,35 @@ const VoucherBanner: React.FC<VoucherBannerProps> = ({ vouchers }) => {
   }, [vouchers]);
 
   useEffect(() => {
-    if (!bestVoucher) return;
+    if (!bestVoucher || !bestVoucher.berakhir) return;
 
     const interval = setInterval(() => {
-      const now = new Date();
-      const endDate = new Date(bestVoucher.berakhir);
-      endDate.setHours(23, 59, 59, 999);
+      const now = new Date().getTime();
+      // JavaScript otomatis mengonversi format UTC Payload ke waktu lokal user
+      const end = new Date(bestVoucher.berakhir!).getTime();
+      const distance = end - now;
 
-      const diff = endDate.getTime() - now.getTime();
-
-      if (diff <= 0) {
+      if (distance < 0) {
         setIsVisible(false);
         clearInterval(interval);
         return;
       }
 
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor(
-        (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+      // Kalkulasi waktu (Hari, Jam, Menit, Detik)
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const h = Math.floor(
+        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
       );
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((distance % (1000 * 60)) / 1000);
 
-      const daysStr = days > 0 ? `${days}D ` : "";
-      setTimeLeft(
-        `${daysStr}${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`,
-      );
+      // Format string: Tampilkan hari jika > 0
+      const dayDisplay = days > 0 ? `${days}d ` : "";
+      const timeDisplay = `${h.toString().padStart(2, "0")}:${m
+        .toString()
+        .padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+
+      setTimeLeft(`${dayDisplay}${timeDisplay}`);
     }, 1000);
 
     return () => clearInterval(interval);
@@ -81,10 +90,9 @@ const VoucherBanner: React.FC<VoucherBannerProps> = ({ vouchers }) => {
   if (!isVisible || !bestVoucher) return null;
 
   return (
-    <div className="bg-neutral-900 text-white border-b border-white/10 relative overflow-hidden">
-      <div className="absolute inset-0 opacity-5 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
-      <div className="container mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6 relative z-10 text-center md:text-left">
-        <div className="flex items-center gap-3 animate-pulse">
+    <div className="bg-black text-white py-2 px-4 border-b border-white/10 relative overflow-hidden group">
+      <div className="container mx-auto flex flex-col md:flex-row items-center justify-center gap-4 relative z-10">
+        <div className="flex items-center gap-2 animate-pulse">
           <div className="bg-street-red p-1">
             <Tag size={16} className="text-white" />
           </div>
@@ -96,13 +104,15 @@ const VoucherBanner: React.FC<VoucherBannerProps> = ({ vouchers }) => {
           </span>
         </div>
 
-        <div className="flex items-center gap-2 bg-black/50 px-3 py-1 border border-white/10">
+        {/* Countdown Timer */}
+        <div className="flex items-center gap-2 bg-black/50 px-3 py-1 border border-white/10 rounded">
           <Clock size={14} className="text-street-red" />
           <span className="font-mono text-sm font-bold tracking-widest text-yellow-500">
             {timeLeft}
           </span>
         </div>
 
+        {/* Copy Section */}
         <div className="flex items-center gap-2">
           <span className="text-xs text-gray-400 uppercase font-bold hidden md:inline">
             Use Code:

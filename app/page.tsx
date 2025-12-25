@@ -1,15 +1,10 @@
 // app/page.tsx
 
 import HomeClient from "@/components/HomeClient";
-import { getProducts, getVouchers } from "@/lib/supabase";
-
-// Mengaktifkan Edge Runtime agar loading halaman sangat cepat di Cloudflare
-export const runtime = "edge";
+import { getProducts, getVouchers } from "@/lib/api";
 
 export default async function Home() {
   try {
-    // Memanggil data secara paralel dari Supabase
-
     const [products, vouchers] = await Promise.all([
       getProducts(),
       getVouchers(),

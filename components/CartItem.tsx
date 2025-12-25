@@ -11,15 +11,29 @@ interface CartItemProps {
 }
 
 const CartItem: React.FC<CartItemProps> = ({ item, onUpdateQty, onRemove }) => {
-  const discountAmount = (item.harga_normal * item.diskon_persen) / 100;
+  const PAYLOAD_URL =
+    process.env.NEXT_PUBLIC_PAYLOAD_URL || "http://localhost:3000";
+  const discount = item.diskon_persen ?? 0;
+  const discountAmount = (item.harga_normal * discount) / 100;
   const finalPrice = item.harga_normal - discountAmount;
+
+  const getImageUrl = () => {
+    if (
+      item.gambar_media &&
+      typeof item.gambar_media === "object" &&
+      item.gambar_media.url
+    ) {
+      return `${PAYLOAD_URL}${item.gambar_media.url}`;
+    }
+    return item.gambar || "/placeholder-image.png"; // Pastikan string, bukan null
+  };
 
   return (
     <div className="flex flex-col sm:flex-row gap-4 border-b border-gray-200 py-6 last:border-b-0">
       {/* Image */}
       <div className="w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 bg-gray-100 overflow-hidden border border-gray-200">
         <img
-          src={item.gambar}
+          src={getImageUrl()}
           alt={item.nama}
           className="w-full h-full object-cover"
         />

@@ -91,15 +91,17 @@ const VoucherListModal: React.FC<VoucherListModalProps> = ({
                   </h4>
 
                   <p className="text-xs text-gray-600">
-                    Minimum purchase: {formatRupiah(voucher.min_belanja)}
+                    Minimum purchase: {formatRupiah(voucher.min_belanja ?? 0)}
                   </p>
                   <p className="text-xs text-gray-600">
                     Valid until:{" "}
-                    {new Date(voucher.berakhir).toLocaleDateString("en-US", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })}
+                    {voucher.berakhir
+                      ? new Date(voucher.berakhir).toLocaleDateString("en-US", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })
+                      : "No Expiry"}
                   </p>
                 </div>
               );

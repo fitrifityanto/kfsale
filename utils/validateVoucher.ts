@@ -30,16 +30,18 @@ export const validateVoucher = (
     const now = new Date();
     now.setHours(0, 0, 0, 0);
 
-    // Ambil YYYY-MM-DD saja
-    const startStr = voucher.mulai.toString().split("T")[0];
-    const startDate = new Date(`${startStr}T00:00:00`);
+    // pengecekan null-safety sebelum .toString()
+    if (voucher.mulai) {
+      const startStr = voucher.mulai.toString().split("T")[0];
+      const startDate = new Date(`${startStr}T00:00:00`);
 
-    if (now.getTime() < startDate.getTime()) {
-      return {
-        isValid: false,
-        message: "Voucher is not active yet.",
-        discountAmount: 0,
-      };
+      if (now.getTime() < startDate.getTime()) {
+        return {
+          isValid: false,
+          message: "Voucher is not active yet.",
+          discountAmount: 0,
+        };
+      }
     }
 
     return {
@@ -49,20 +51,24 @@ export const validateVoucher = (
     };
   }
 
-  if (subtotal < voucher.min_belanja) {
+  // Gunakan fallback ?? 0 agar tidak error saat dibandingkan dengan subtotal
+  const minPurchase = voucher.min_belanja ?? 0;
+  if (subtotal < minPurchase) {
     return {
       isValid: false,
-      message: `Minimum purchase Rp ${voucher.min_belanja.toLocaleString()} required.`,
+      message: `Minimum purchase Rp ${minPurchase.toLocaleString()} required.`,
       discountAmount: 0,
     };
   }
 
-  const discount = (subtotal * voucher.diskon_persen) / 100;
+  // Null-safety untuk diskon_persen
+  const discountPercent = voucher.diskon_persen ?? 0;
+  const discountAmount = Math.round((subtotal * discountPercent) / 100);
 
   return {
     isValid: true,
-    message: `Voucher applied! -${voucher.diskon_persen}%`,
-    discountAmount: discount,
-    voucher: voucher,
+    message: `Voucher applied: ${discountPercent}% discount!`,
+    discountAmount,
+    voucher,
   };
 };

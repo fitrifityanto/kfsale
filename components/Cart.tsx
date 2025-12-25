@@ -16,8 +16,8 @@ const Cart: React.FC<CartProps> = ({ onBackToHome }) => {
   const { cartItems, updateQuantity, removeFromCart } = useCart();
 
   const subtotal = cartItems.reduce((total, item) => {
-    const price =
-      item.harga_normal - (item.harga_normal * item.diskon_persen) / 100;
+    const diskon = item.diskon_persen ?? 0;
+    const price = item.harga_normal - (item.harga_normal * diskon) / 100;
     return total + price * item.quantity;
   }, 0);
 
